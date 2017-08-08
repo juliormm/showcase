@@ -1,6 +1,13 @@
 <div class="container-fluid">
   
   	<div class="row">
-  		<div class="col-md-1">.col-md-1</div>
+  		<div class="col-md-4" *ngFor="let item of gridData"> 
+  			<h1>{{ item.client_name }}</h1>
+			<div>
+				{{item.campaign_name}} <br>
+				{{item.cover}}<br>
+				{{item.description}}
+			</div>
+  		</div>
   	</div>
 </div>
