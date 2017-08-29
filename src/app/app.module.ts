@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ModalModule } from 'ngx-bootstrap';
 
@@ -16,7 +17,8 @@ import { AppComponent } from './app.component';
 import { HomeGridComponent } from './home-grid/home-grid.component';
 import { MenuHeaderComponent } from './menu-header/menu-header.component';
 import { UnitDisplayComponent } from './unit-display/unit-display.component';
-import { LoadingScreenComponent } from './loading-screen/loading-screen.component'
+import { LoadingScreenComponent } from './loading-screen/loading-screen.component';
+import { PreviewAdComponent } from './preview-ad/preview-ad.component';
 
 @NgModule({
   declarations: [
@@ -24,10 +26,11 @@ import { LoadingScreenComponent } from './loading-screen/loading-screen.componen
     HomeGridComponent,
     MenuHeaderComponent,
     UnitDisplayComponent,
-    LoadingScreenComponent
+    LoadingScreenComponent,
+    PreviewAdComponent
   ],
   imports: [
-    CommonModule, FormsModule, HttpModule,
+    CommonModule, FormsModule, HttpModule, BrowserAnimationsModule,
     BrowserModule,
     AppRoutingModule,
     ModalModule.forRoot()

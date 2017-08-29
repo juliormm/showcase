@@ -1,13 +1,25 @@
 <app-menu-header></app-menu-header>
-<div class="container-fluid">
-  	<div class="row">
-  		<div class="col-md-4" *ngFor="let item of gridData"> 
-  			<h1 (click)="openModalWithComponent()">{{ item.client_name }}</h1>
-			<div>
-				{{item.campaign_name}} <br>
-				{{item.cover}}<br>
-				{{item.description}}
-			</div>
-  		</div>
-  	</div>
+<div class="container">
+<div class="row">
+  <div class="col-xs-12">
+    <span (click)="filterType('all')">ALL</span> <span (click)="filterType('static')">Static</span> <span (click)="filterType('standard')">Standard</span> <span (click)="filterType('richmedia')">Richmedia</span>
+  </div>
+</div>
+  <div class="row nomargin" *ngIf="gridData.length > 0">
+    <div class="col-md-4 custom-pad" *ngFor="let item of gridData; let i = index" [@gridInOut]="state">
+    <!--   <h1 >{{ item.client_name }}</h1>
+      <div>
+        {{item.campaign_name}}
+        <br> {{item.description}}
+      </div> -->
+      <div (click)="openModalWithComponent(i)">
+        <img src="{{ coverURL + item.cover }}" class="thumb">
+      </div>
+    </div>
+  </div>
+  <div class="row" *ngIf="gridData.length == 0">
+    <div class="col-xs-12">
+      No campaigns to show
+    </div>
+  </div>
 </div>

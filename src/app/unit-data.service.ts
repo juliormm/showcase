@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
 
 export interface IUnit {
     creatives_id: number;
@@ -10,6 +11,9 @@ export interface IUnit {
     url_path: string;
     sub_type: string;
     safe_mobile: string;
+    extension?: string;
+    active: boolean;
+    state: string;
 }
 
 
@@ -21,21 +25,63 @@ export interface ICampaign {
     creatives: IUnit[];
     description: string;
     showcase_rev: number;
+    active: boolean;
 }
 
 @Injectable()
 export class UnitDataService {
 
-    dataList: ICampaign[];
-    rmCache: ICampaign[];
-    stdCache: ICampaign[];
-    statCache: ICampaign[];
+    private dataList: ICampaign[];
+    private rmCache: ICampaign[];
+    private stdCache: ICampaign[];
+    private statCache: ICampaign[];
+    private activeCampaign: ICampaign;
 
+    private closeModalSub = new Subject();
+    $closeModal = this.closeModalSub.asObservable();
 
-    constructor() { }
+    started: Date;
+
+    constructor() {
+        this.started = new Date();
+        console.log(this.started);
+    }
+
+    closeModal() {
+        this.closeModalSub.next({});
+        // this.
+    }
+
+    resetAll() {
+        this.dataList = this.dataList.map(elm => {
+            elm.active = false;
+            elm.creatives.forEach(crv => {
+                crv.active = false;
+                crv.state = 'right';
+            });
+            return elm;
+        });
+    }
 
     setDataList(data: ICampaign[]) {
+        this.dataList = data.map(elm => {
+            elm.active = false;
+            elm.creatives.forEach(crv => {
+                crv.active = false;
+                crv.state = 'right';
+            });
+            return elm;
+        });
         this.dataList = data;
+        console.log(this.dataList);
+    }
+
+    setActiveCampaign(index) {
+        this.activeCampaign = this.dataList[index];
+    }
+
+    getActiveCampaign() {
+        return this.activeCampaign;
     }
 
     getAll() {
@@ -63,7 +109,11 @@ export class UnitDataService {
         return this.statCache;
     }
 
-    private getType(type: string): ICampaign[]  {
+    getCampaignByIndex(idx) {
+        return this.dataList[idx];
+    }
+
+    private getType(type: string): ICampaign[] {
         const newList: ICampaign[] = this.dataList.filter(elm => {
             const crvList = elm.creatives.filter(crv => {
                 return crv.type === type;

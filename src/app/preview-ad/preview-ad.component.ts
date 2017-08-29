@@ -2,28 +2,23 @@ import { Component, SimpleChanges, OnChanges, AfterViewInit, Input, HostListener
 import { DomSanitizer, } from '@angular/platform-browser';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { IUnit } from '../unit-data.service';
-import { environment } from '../../environments/environment'
-import { CreativeTypesService } from '../creative-types.service';
-
-
-
-export 
+import { environment } from '../../environments/environment';
+// import { CreativeTypesService } from '../creative-types.service';
 
 
 
 @Component({
     selector: 'app-preview-ad',
     template: `
-    <div *ngIf="showWarning" class="alert alert-warning" role="alert">The image is being scaled to fit the screen.</div>
-    <div id="dynamic-preview" class="center-block tracksize" [ngStyle]="styleSet">
-        <div [innerHTML]="html"></div>
-    </div>
         
+        <div id="dynamic-preview" class="center-block tracksize" [ngStyle]="styleSet">
+            <div [innerHTML]="html"></div>
+        </div>
     `
 })
 
 export class PreviewAdComponent implements OnChanges, AfterViewInit {
-    @Input('creative') creativeInfo: IUnit;
+    @Input() creative: any;
     size = {
         width: 800,
         height: 500
@@ -36,49 +31,49 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
     baseURL = environment.PREVIEWS_URL;
     safeURL: string;
     html: any;
-    constructor(private sanitizer: DomSanitizer, private el: ElementRef, private crvService: CreativeTypesService) { }
+    constructor(private sanitizer: DomSanitizer, private el: ElementRef) { }
 
-    @HostListener('window:resize', ['$event'])
-    onResize(event) {
-        console.log('resizing')
-        this.detectShowWarning();
-    }
+    // @HostListener('window:resize', ['$event'])
+    // onResize(event) {
+    //     this.detectShowWarning();
+    // }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes['creativeInfo']) {
+        if (changes['creative']) {
             let useSize = true;
-            if (this.creativeInfo.type === 'Email' && this.creativeInfo.extension === '.html') {
+            if (this.creative.type === 'Email' && this.creative.extension === '.html') {
                 // email creatives
                 this.size.width = 800;
                 this.size.height = 600;
                 this.creativeWidth = 800;
                 this.creativeHeight = 600;
                 this.adjustStyles();
-            } else if (this.creativeInfo.type === 'Email' && this.creativeInfo.extension !== '.html') {
+            } else if (this.creative.type === 'Email' && this.creative.extension !== '.html') {
                 // image email creatives
                 this.size.width = 800;
                 this.size.height = 600;
                 useSize = false;
-            } else if (this.creativeInfo.type !== 'Email' && this.creativeInfo.extension !== '.html' && this.creativeInfo.tag !== 'Static') {
-                console.log('any other static not mobile')
+            } else if (this.creative.type !== 'Email' && this.creative.extension !== '.html' && this.creative.sub_type !== 'Static') {
+                console.log('any other static not mobile');
                 useSize = false;
-                const splitSize = this.creativeInfo.size.split('x');
+                const splitSize = this.creative.size.split('x');
                 this.creativeWidth = +splitSize[0];
                 this.creativeHeight = +splitSize[1];
-                this.detectShowWarning();
+                // this.detectShowWarning();
             } else {
-                const splitSize = this.creativeInfo.size.split('x');
+                console.log('regular html creative')
+                const splitSize = this.creative.size.split('x');
                 this.creativeWidth = +splitSize[0];
                 this.creativeHeight = +splitSize[1];
 
                 this.size.width = this.creativeWidth;
-                this.size.height = this. creativeHeight;
+                this.size.height = this.creativeHeight;
                 this.adjustStyles(false);
 
             }
 
-            this.safeURL = (this.creativeInfo.url_params) ? this.baseURL + this.creativeInfo.url_path + '?' + this.creativeInfo.url_params : this.baseURL + this.creativeInfo.url_path;
-            this.html = this.sanitizer.bypassSecurityTrustHtml(this.getBaseHTML(this.creativeInfo.url_path, useSize));
+            this.safeURL = (this.creative.url_params) ? this.baseURL + this.creative.url_path + '?' + this.creative.url_params : this.baseURL + this.creative.url_path;
+            this.html = this.sanitizer.bypassSecurityTrustHtml(this.getBaseHTML(this.creative.url_path, useSize));
         }
     }
 
@@ -86,13 +81,13 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
         // this.detectShowWarning();
     }
 
-    detectShowWarning() {
-        // apply only on images that are not mobile sizes
-        if (this.creativeInfo.extension !== '.html' && this.creativeInfo.tag !== 'Mobile') {
-            this.expandToParent();
-            this.showWarning = (this.creativeWidth > this.size.width) ? true : false;
-        }
-    }
+    // detectShowWarning() {
+    //     // apply only on images that are not mobile sizes
+    //     if (this.creative.extension !== '.html' && this.creative.sub_type !== 'Mobile') {
+    //         this.expandToParent();
+    //         this.showWarning = (this.creativeWidth > this.size.width) ? true : false;
+    //     }
+    // }
 
     adjustStyles(padding = true) {
         this.styleSet = {
@@ -111,18 +106,19 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
 
     restartAd() {
         console.log('restating add');
-        this.html = this.sanitizer.bypassSecurityTrustHtml(this.getBaseHTML(this.creativeInfo.url_path, true));
+        this.html = this.sanitizer.bypassSecurityTrustHtml(this.getBaseHTML(this.creative.url_path, true));
     }
 
     expandToParent() {
-        const elm = this.el.nativeElement.querySelector('#dynamic-preview');
-        const parent = elm.parentElement.parentElement;
-        this.size.width = parent.offsetWidth;
-        if (this.creativeHeight >= 500) {
-            this.size.height = this.creativeHeight + 10;
-        }
+        // const elm = this.el.nativeElement.querySelector('.dynamic-preview');
+   
+        // const parent = elm.parentElement.parentElement;
+        // this.size.width = parent.offsetWidth;
+        // if (this.creativeHeight >= 500) {
+        //     this.size.height = this.creativeHeight + 10;
+        // }
 
-        this.adjustStyles();
+        // this.adjustStyles();
     }
 
     getBaseHTML(url: string, useSize = true) {

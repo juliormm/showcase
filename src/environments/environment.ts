@@ -6,5 +6,6 @@
 export const environment = {
   production: false,
   API_URL: 'http://localhost:8888/db/public/',
-  PREVIEWS_URL: ' http://quicktransmit.com/api/campaigns/_previews/'
+  PREVIEWS_URL: ' http://quicktransmit.com/api/campaigns/_previews/',
+  SHOWCASE_IMAGES: 'http://localhost:8888/db/public/images/showcase/'
 };
