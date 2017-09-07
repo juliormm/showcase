@@ -10,3 +10,60 @@
 .custom-pad{
 	padding:6px;
 }
+
+.type-navigation{
+	text-transform: uppercase;
+	font-family: bebas-neue, serif;
+	font-style: normal;
+	font-weight: 400;
+
+}
+
+.type-navigation>ul{
+
+}
+
+.navbar-nav {
+    float:none;
+    margin:0 auto;
+    display: block;
+    text-align: center;
+}
+
+.navbar-nav > li {
+    display: inline-block;
+    float:none;
+	margin:10px;
+    &.active{
+   	border-bottom: 1px;
+	border-bottom: 2px dotted;
+	border-bottom: medium solid #07a1bf;
+   }
+}
+
+
+
+/deep/ .modal-content{
+	border-radius:0;
+	background-color: #000000;
+}
+
+
+// .nav>li {
+//    margin:10px;
+//    display: inline-block;
+//   float: none;
+
+   
+// }
+
+
+// .navbar-nav {
+//   display: inline-block;
+//   float: none;
+//   vertical-align: top;
+// }
+
+// .navbar .navbar-collapse {
+//   text-align: center;
+// }

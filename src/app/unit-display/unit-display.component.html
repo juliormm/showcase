@@ -1,23 +1,21 @@
 <div class="modal-header">
   <h4 class="modal-title pull-left">{{currentCampaign.campaign_name}}</h4>
   <button type="button" class="close pull-right" aria-label="Close" (click)="_uService.closeModal()">
-    <span aria-hidden="true">&times;</span>
+    <span aria-hidden="true"><img src="./assets/images/close_modal.png" alt=""></span>
   </button>
 </div>
 <div class="modal-body" id="modal-body">
-
-	<div class="ad-view">
-		
-		<div class="vertical-center" [ngStyle]="currentCrvSize">
-			<div class="slide-item" [@slideInOut]="item.state" *ngFor="let item of currentCampaign.creatives; let idx = index;">
-				<app-preview-ad *ngIf="item.active" [creative]="item"></app-preview-ad>
-			</div>
-		</div>
-	</div>
-
-	<div class="left-arrow"(click)="onNextUnit()"> <span class="glyphicon glyphicon-chevron-left"></span></div>
-	<div class="right-arrow" (click)="onPrevUnit()"> <span class="glyphicon glyphicon-chevron-right"></span></div>
-
+  <div class="ad-view">
+    <div class="vertical-center" [ngStyle]="currentCrvSize">
+      <div *ngFor="let item of currentCampaign.creatives; let idx = index;">
+        <div class="slide-item" *ngIf="item.active" [@slideInOut]>
+          <app-preview-ad [creative]="item"></app-preview-ad>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="left-arrow" (click)="onNextUnit()"> <span class="glyphicon glyphicon-chevron-left"></span></div>
+  <div class="right-arrow" (click)="onPrevUnit()"> <span class="glyphicon glyphicon-chevron-right"></span></div>
 </div>
 <div class="modal-footer">
   <!-- <button type="button" class="btn btn-default" (click)="bsModalRef.hide()">Close</button> -->

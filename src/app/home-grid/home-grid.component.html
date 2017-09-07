@@ -1,18 +1,27 @@
 <app-menu-header></app-menu-header>
 <div class="container">
-<div class="row">
-  <div class="col-xs-12">
-    <span (click)="filterType('all')">ALL</span> <span (click)="filterType('static')">Static</span> <span (click)="filterType('standard')">Standard</span> <span (click)="filterType('richmedia')">Richmedia</span>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="type-navigation">
+        <!--  <span (click)="filterType('all')">ALL</span> <span (click)="filterType('static')">Static</span> <span (click)="filterType('standard')">Standard</span> <span (click)="filterType('richmedia')">Richmedia</span> -->
+        <ul class="nav navbar-nav">
+          <li (click)="filterType('all')" [ngClass]="{'active':activeFilterClass === 'all'}">ALL</li>
+          <li (click)="filterType('static')" [ngClass]="{'active':activeFilterClass === 'static'}">Static</li>
+          <li (click)="filterType('standard')" [ngClass]="{'active':activeFilterClass === 'standard'}">Standard</li>
+          <li (click)="filterType('richmedia')" [ngClass]="{'active':activeFilterClass === 'richmedia'}">Rich Media</li>
+        </ul>
+      </div>
+    </div>
   </div>
-</div>
   <div class="row nomargin" *ngIf="gridData.length > 0">
     <div class="col-md-4 custom-pad" *ngFor="let item of gridData; let i = index" [@gridInOut]="state">
-    <!--   <h1 >{{ item.client_name }}</h1>
+      <!--   <h1 >{{ item.client_name }}</h1>
       <div>
         {{item.campaign_name}}
         <br> {{item.description}}
       </div> -->
-      <div (click)="openModalWithComponent(i)">
+      <div (click)="openModalWithComponent(item)">
+        {{ item.types | json }}
         <img src="{{ coverURL + item.cover }}" class="thumb">
       </div>
     </div>

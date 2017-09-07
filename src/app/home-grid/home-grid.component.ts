@@ -5,8 +5,6 @@ import { ApiService } from '../api.service';
 import { UnitDataService } from '../unit-data.service';
 import { LoadingService } from '../loading.service';
 
-import { TweenLite } from 'gsap';
-
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/modal-options.class';
 
@@ -38,6 +36,7 @@ export class HomeGridComponent implements OnInit {
     gridData;
     bsModalRef: BsModalRef;
     coverURL = environment.SHOWCASE_IMAGES;
+    activeFilterClass = 'all';
 
     modalConfig = {
         class: 'class',
@@ -56,6 +55,7 @@ export class HomeGridComponent implements OnInit {
         this.route.data.subscribe((data: any) => {
             this._uService.setDataList(data['fullLoad']);
             this.gridData = this._uService.getAll();
+            // console.log(this.gridData);
             this._loading.hide();
             setTimeout(() => {
                 this.state = 'out';
@@ -90,7 +90,11 @@ export class HomeGridComponent implements OnInit {
         } else {
             this.gridData = this._uService.getAll();
         }
+        this.activeFilterClass = type;
+
+        console.log(this.gridData);
     }
+
 
 
 

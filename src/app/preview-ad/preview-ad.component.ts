@@ -53,15 +53,13 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
                 this.size.width = 800;
                 this.size.height = 600;
                 useSize = false;
-            } else if (this.creative.type !== 'Email' && this.creative.extension !== '.html' && this.creative.sub_type !== 'Static') {
-                console.log('any other static not mobile');
+            } else if (this.creative.type === 'Static' && this.creative.tag === 'Social') {
                 useSize = false;
                 const splitSize = this.creative.size.split('x');
                 this.creativeWidth = +splitSize[0];
                 this.creativeHeight = +splitSize[1];
                 // this.detectShowWarning();
             } else {
-                console.log('regular html creative')
                 const splitSize = this.creative.size.split('x');
                 this.creativeWidth = +splitSize[0];
                 this.creativeHeight = +splitSize[1];
@@ -91,8 +89,8 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
 
     adjustStyles(padding = true) {
         this.styleSet = {
-            'width': (this.size.width + 2) + 'px',
-            'height': (this.size.height + 2) + 'px',
+            'width': (this.size.width) + 'px',
+            'height': (this.size.height) + 'px',
             'overflow-y': 'auto',
             'overflow-x': 'hidden'
         };

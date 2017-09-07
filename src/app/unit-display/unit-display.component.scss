@@ -1,6 +1,15 @@
+.slide-item {
+	background-color:#FFFFFF;
+	padding: 10px;
+}
+
+.ng-trigger-slideInOut{
+	opacity:1;
+}
+
 .modal-body{
 	padding: 10px 0;
-    height: calc(80vh);
+    height: calc(75vh);
     width: 100%;
 }
 
@@ -35,6 +44,19 @@
 	bottom:0;
 }
 
+.modal-header{
+	color: #FFFFFF;
+	text-transform: uppercase;
+	border-bottom: none;
+
+	h4 {
+		font-size:40px;
+	}
+}
+
+
+
+
 @media (min-width: 768px){
 	.modal-body{
 		padding: 10px 50px;
@@ -45,13 +67,17 @@
 	.left-arrow{
 		left: 20px;
 		top: calc(40vh);
-	bottom: auto;
+		bottom: auto;
+		font-size: 56px;
+    color: #FFFFFF;
 	}
 
 	.right-arrow{
 		right: 20px;
 		top: calc(40vh);
-	bottom: auto;
+		bottom: auto;
+		font-size: 56px;
+    color: #FFFFFF;
 	}
 }
 

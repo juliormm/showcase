@@ -10,17 +10,23 @@ import { trigger, state, style, transition, animate, keyframes } from '@angular/
     styleUrls: ['./unit-display.component.scss'],
     animations: [
         trigger('slideInOut', [
-            state('hide', style({
-                opacity: '0'
-            })),
-            state('show', style({
-                opacity: '1'
-            })),
+            // state(':leave', style({
+            //     opacity: '0'
+            // })),
+            // state(':enter', style({
+            //     opacity: '1'
+            // })),
 
+            transition('void => *', [
+              animate(300, style({opacity: '1'}))
+            ]),
+            transition('* => void', [
+              animate(300, style({opacity: '0'}))
+            ])
             // transition('* <=> show', style({opacity:0, }), animate('600ms ease')),
             // transition('* => right')
-            transition('show => hide', animate('300ms ease-in')),
-            transition('hide => show', animate('300ms ease-out')),
+            // transition('show => hide', animate('300ms ease-in')),
+            // transition('hide => show', animate('300ms ease-out')),
             // transition('left => show', animate('300ms ease-out')),
             // transition('show => right', animate('300ms ease-out')),
             // transition('out => in', animate(''))
@@ -35,7 +41,7 @@ export class UnitDisplayComponent implements OnInit, AfterViewInit {
     public title: string;
     public campaign: ICampaign;
 
-    animState = 'in';
+    // animState = 'in';
 
     currentCampaign: ICampaign;
     // displayCampaigns: ICampaign[];
@@ -72,11 +78,12 @@ export class UnitDisplayComponent implements OnInit, AfterViewInit {
     onNextUnit() {
         this.prevIdx = this.currIdx;
         this.currIdx = (this.currIdx++ >= this.currentCampaign.creatives.length - 1) ? 0 : this.currIdx++;
-        this.currentCampaign.creatives[this.prevIdx].state = 'hide';
+        // this.currentCampaign.creatives[this.prevIdx].state = 'hide';
+         this.currentCampaign.creatives[this.prevIdx].active = false;
         setTimeout(() => {
-            this.currentCampaign.creatives[this.prevIdx].active = false;
+            // this.currentCampaign.creatives[this.prevIdx].active = false;
             this.currentCampaign.creatives[this.currIdx].active = true;
-            this.currentCampaign.creatives[this.currIdx].state = 'show';
+            // this.currentCampaign.creatives[this.currIdx].state = 'show';
             this.currentCrvSize = this.getCreativeSize(this.currentCampaign.creatives[this.currIdx]);
         }, 300);
 
@@ -85,12 +92,13 @@ export class UnitDisplayComponent implements OnInit, AfterViewInit {
     onPrevUnit() {
         this.prevIdx = this.currIdx;
         this.currIdx = (this.currIdx-- <= 0) ? this.currentCampaign.creatives.length - 1 : this.currIdx--;
-        this.currentCampaign.creatives[this.prevIdx].state = 'hide';
+        // this.currentCampaign.creatives[this.prevIdx].state = 'hide';
+          this.currentCampaign.creatives[this.prevIdx].active = false;
 
         setTimeout(() => {
-            this.currentCampaign.creatives[this.prevIdx].active = false;
+          
             this.currentCampaign.creatives[this.currIdx].active = true;
-            this.currentCampaign.creatives[this.currIdx].state = 'show';
+            // this.currentCampaign.creatives[this.currIdx].state = 'show';
             this.currentCrvSize = this.getCreativeSize(this.currentCampaign.creatives[this.currIdx]);
         }, 300);
     }
@@ -105,7 +113,7 @@ export class UnitDisplayComponent implements OnInit, AfterViewInit {
 
     getCreativeSize(crv: IUnit) {
           const splitSize = crv.size.split('x');
-          return {width: splitSize[0] + 'px', height: splitSize[1] + 'px'};
+          return {width: (+splitSize[0] + 20) + 'px', height: (+splitSize[1] + 20) +  'px'};
     }
 
 }

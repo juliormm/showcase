@@ -26,6 +26,7 @@ export interface ICampaign {
     description: string;
     showcase_rev: number;
     active: boolean;
+    types: string[];
 }
 
 @Injectable()
@@ -64,20 +65,24 @@ export class UnitDataService {
     }
 
     setDataList(data: ICampaign[]) {
-        this.dataList = data.map(elm => {
-            elm.active = false;
-            elm.creatives.forEach(crv => {
-                crv.active = false;
-                crv.state = 'right';
-            });
-            return elm;
+        this.dataList = data.filter(elm => {
+            if (elm.cover) {
+                elm.active = false;
+                elm.creatives.forEach(crv => {
+                    crv.active = false;
+                    crv.state = 'right';
+                });
+                return elm;
+            } else {
+                return false;
+            }
         });
-        this.dataList = data;
+        // this.dataList = data;
         console.log(this.dataList);
     }
 
-    setActiveCampaign(index) {
-        this.activeCampaign = this.dataList[index];
+    setActiveCampaign(data: ICampaign) {
+        this.activeCampaign = data;
     }
 
     getActiveCampaign() {
@@ -115,12 +120,22 @@ export class UnitDataService {
 
     private getType(type: string): ICampaign[] {
         const newList: ICampaign[] = this.dataList.filter(elm => {
-            const crvList = elm.creatives.filter(crv => {
-                return crv.type === type;
+            return elm.types.some(list => {
+                return list === type;
             });
-
-            return crvList.length > 0;
         });
+
+        if (type !== 'all') {
+            newList.map(elm => {
+                elm.creatives.sort((a, b) => {
+                    if (a.type === type) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+            });
+        }
 
         return newList;
     }
