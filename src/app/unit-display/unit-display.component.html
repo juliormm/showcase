@@ -1,23 +1,32 @@
 <div class="modal-header">
-  <h4 class="modal-title pull-left">{{currentCampaign.campaign_name}}</h4>
+  <div class="modal-title pull-left">{{currentCampaign.campaign_name}}</div>
   <button type="button" class="close pull-right" aria-label="Close" (click)="_uService.closeModal()">
     <span aria-hidden="true"><img src="./assets/images/close_modal.png" alt=""></span>
   </button>
 </div>
-<div class="modal-body" id="modal-body">
+<div class="modal-body swipe-box" id="modal-body" (swipeleft)="swipe($event.type)" (swiperight)="swipe($event.type)">
   <div class="ad-view">
     <div class="vertical-center" [ngStyle]="currentCrvSize">
-      <div *ngFor="let item of currentCampaign.creatives; let idx = index;">
-        <div class="slide-item" *ngIf="item.active" [@slideInOut]>
-          <app-preview-ad [creative]="item"></app-preview-ad>
+      <div *ngFor="let item of currentCampaign.creatives; let idx = index;" [@slideInOut]="item.state" (@slideInOut.start)="animationStarted($event)" (@slideInOut.done)="animationDone($event)">
+        <div class="slide-item" *ngIf="item.active">
+          <app-preview-ad [render]="item.active" [creative]="item"></app-preview-ad>
         </div>
       </div>
     </div>
   </div>
-  <div class="left-arrow" (click)="onNextUnit()"> <span class="glyphicon glyphicon-chevron-left"></span></div>
-  <div class="right-arrow" (click)="onPrevUnit()"> <span class="glyphicon glyphicon-chevron-right"></span></div>
+  <div class="arrow-nav">
+     <div class="btn left-arrow" (click)="onPrevUnit()"> <span class="arrow glyphicon glyphicon-menu-left"></span></div>
+    <div class="btn right-arrow" (click)="onNextUnit()"> <span class="arrow glyphicon glyphicon-menu-right"></span></div>
+  </div>
+ 
 </div>
 <div class="modal-footer">
-  <!-- <button type="button" class="btn btn-default" (click)="bsModalRef.hide()">Close</button> -->
-  some foooter
+  <div class="row">
+    <div class="" [ngClass]="subDynamicClass()" *ngFor="let t of mapSubMenu;">
+      <div class="text-center">
+        <span class="submenu-title"> {{ t.type }}: </span>
+        <span class="submenu-size" (click)="changeCreative(crv.index)" [ngClass]="activeSubMenu(crv)" *ngFor="let crv of t.items">{{crv.size}}</span>
+      </div>
+    </div>
+  </div>
 </div>

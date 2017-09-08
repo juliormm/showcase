@@ -4,23 +4,37 @@
 
 .modal-open .modal-dialog {
   width: 100%;
-  margin: 5px auto;
+  margin: 0;
 }
 
-.modal-dialog .modal-body {
-  height: calc(100vh - 140px);
+.modal-dialog .modal-content {
   overflow: hidden;
 }
 
-@include breakpoint(xs) {
+.modal-open .modal {
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
 
+
+
+
+/* Small devices (tablets, 768px and up) */
+
+@media (min-width: $screen-sm-min) {}
+
+
+/* Medium devices (desktops, 992px and up) */
+
+@media (min-width: $screen-md-min) {
 
   .modal-open .modal-dialog {
-    width: 80%;
+    width: 90%;
     margin: 30px auto;
   }
-
-  .modal-dialog .modal-body {
-    height: calc(100vh - 200px);
-  }
 }
+
+
+/* Large devices (large desktops, 1200px and up) */
+
+@media (min-width: $screen-lg-min) {}

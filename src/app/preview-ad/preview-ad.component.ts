@@ -9,16 +9,15 @@ import { environment } from '../../environments/environment';
 
 @Component({
     selector: 'app-preview-ad',
-    template: `
-        
-        <div id="dynamic-preview" class="center-block tracksize" [ngStyle]="styleSet">
-            <div [innerHTML]="html"></div>
+    template: `<div id="dynamic-preview" class="center-block tracksize" [ngStyle]="styleSet">
+            <div *ngIf="render" [innerHTML]="html"></div>
         </div>
     `
 })
 
 export class PreviewAdComponent implements OnChanges, AfterViewInit {
     @Input() creative: any;
+    @Input() render = true;
     size = {
         width: 800,
         height: 500
@@ -53,13 +52,15 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
                 this.size.width = 800;
                 this.size.height = 600;
                 useSize = false;
-            } else if (this.creative.type === 'Static' && this.creative.tag === 'Social') {
+            } else if (this.creative.type === 'Static' && this.creative.sub_type === 'Social') {
+                console.log('social');
                 useSize = false;
                 const splitSize = this.creative.size.split('x');
                 this.creativeWidth = +splitSize[0];
                 this.creativeHeight = +splitSize[1];
                 // this.detectShowWarning();
             } else {
+                console.log('no social here');
                 const splitSize = this.creative.size.split('x');
                 this.creativeWidth = +splitSize[0];
                 this.creativeHeight = +splitSize[1];
@@ -90,9 +91,9 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
     adjustStyles(padding = true) {
         this.styleSet = {
             'width': (this.size.width) + 'px',
-            'height': (this.size.height) + 'px',
-            'overflow-y': 'auto',
-            'overflow-x': 'hidden'
+            'height': (this.size.height) + 'px'
+            // 'overflow-y': 'hidden',
+            // 'overflow-x': 'hidden'
         };
 
         if (padding) {
@@ -109,7 +110,7 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
 
     expandToParent() {
         // const elm = this.el.nativeElement.querySelector('.dynamic-preview');
-   
+
         // const parent = elm.parentElement.parentElement;
         // this.size.width = parent.offsetWidth;
         // if (this.creativeHeight >= 500) {

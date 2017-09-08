@@ -20,6 +20,8 @@ import { UnitDisplayComponent } from './unit-display/unit-display.component';
 import { LoadingScreenComponent } from './loading-screen/loading-screen.component';
 import { PreviewAdComponent } from './preview-ad/preview-ad.component';
 
+import { CreativesByTypePipe } from './creatives-by-type.pipe';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,7 +29,8 @@ import { PreviewAdComponent } from './preview-ad/preview-ad.component';
     MenuHeaderComponent,
     UnitDisplayComponent,
     LoadingScreenComponent,
-    PreviewAdComponent
+    PreviewAdComponent,
+    CreativesByTypePipe
   ],
   imports: [
     CommonModule, FormsModule, HttpModule, BrowserAnimationsModule,

@@ -1,18 +1,10 @@
-$primary-font: "Sentinel SSm A",
-"Sentinel SSm B",
-"Sanchez",
-serif;
-$secondary-font: "Whitney SSm A",
-"Whitney SSm B",
-"Open Sans",
-sans-serif;
 $dark-gray: #282828;
 $medium-gray: #dee1e5;
 $light-gray: #eceef0;
 $turquoise: #08bab5;
 $light-red: #d04040;
 $light-blue: #cfdbe6;
-// $orange: #df7b45;
+$orange: #df7b45;
 $demoIndex:99999;
 
 $topIndex: 2502;
@@ -48,6 +40,11 @@ $silver: #DDDDDD;
 $gray: #AAAAAA;
 $black: #111111;
 
+
+
+$screen-sm-min: 768px;
+$screen-md-min: 992px;
+$screen-lg-min: 1200px;
 
 
 @mixin border-radius($radius) {
@@ -113,24 +110,24 @@ $black: #111111;
     box-shadow: $shadow;
 }
 
-@mixin breakpoint($class) {
-  @if $class == xs {
-    @media (min-width: 576px) { @content; }
-  }
+// @mixin breakpoint($class) {
+//   @if $class == xs {
+//     @media (min-width: 576px) { @content; }
+//   }
  
-  @else if $class == sm {
-    @media (min-width: 768px) { @content; }
-  }
+//   @else if $class == sm {
+//     @media (min-width: 768px) { @content; }
+//   }
  
-  @else if $class == md {
-    @media (min-width: 992px) { @content; }
-  }
+//   @else if $class == md {
+//     @media (min-width: 992px) { @content; }
+//   }
  
-  @else if $class == lg {
-    @media (min-width: 1200px) { @content; }
-  }
+//   @else if $class == lg {
+//     @media (min-width: 1200px) { @content; }
+//   }
  
-  @else {
-    @warn "Breakpoint mixin supports: xs, sm, md, lg";
-  }
-}
+//   @else {
+//     @warn "Breakpoint mixin supports: xs, sm, md, lg";
+//   }
+// }

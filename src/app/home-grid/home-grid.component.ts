@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../api.service';
-import { UnitDataService } from '../unit-data.service';
+import { UnitDataService, ICampaign } from '../unit-data.service';
 import { LoadingService } from '../loading.service';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -36,7 +36,7 @@ export class HomeGridComponent implements OnInit {
     gridData;
     bsModalRef: BsModalRef;
     coverURL = environment.SHOWCASE_IMAGES;
-    activeFilterClass = 'all';
+    activeFilterClass = this._uService.ALL;
 
     modalConfig = {
         class: 'class',
@@ -69,9 +69,9 @@ export class HomeGridComponent implements OnInit {
         });
     }
 
-    openModalWithComponent(index) {
+    openModalWithComponent(data: ICampaign) {
 
-        this._uService.setActiveCampaign(index);
+        this._uService.setActiveCampaign(data, this.activeFilterClass);
         this.bsModalRef = this.modalService.show(UnitDisplayComponent, this.modalConfig);
         // this.state = 'in';
         // this.bsModalRef.content.campaign = this._uService.getCampaignByIndex(index);
@@ -81,18 +81,16 @@ export class HomeGridComponent implements OnInit {
     }
 
     filterType(type) {
-        if (type === 'richmedia') {
+        if (type === this._uService.RICHMEDIA.toLowerCase()) {
             this.gridData = this._uService.getRichMedia();
-        } else if (type === 'standard') {
+        } else if (type === this._uService.STADNARD.toLowerCase()) {
             this.gridData = this._uService.getStandard();
-        } else if (type === 'static') {
+        } else if (type === this._uService.STATIC.toLowerCase()) {
             this.gridData = this._uService.getStatic();
         } else {
             this.gridData = this._uService.getAll();
         }
-        this.activeFilterClass = type;
-
-        console.log(this.gridData);
+        this.activeFilterClass = type.toLowerCase();
     }
 
 
