@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, HostListener, ElementRef } from '@ang
 import { BsModalRef } from 'ngx-bootstrap/modal/modal-options.class';
 import { IUnit, ICampaign, UnitDataService } from '../unit-data.service';
 import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
+// import { Ng2DeviceService } from 'ng2-device-detector';
 
 
 @Component({
@@ -10,51 +11,26 @@ import { trigger, state, style, transition, animate, keyframes } from '@angular/
     styleUrls: ['./unit-display.component.scss'],
     animations: [
         trigger('slideInOut', [
-            // state(':leave', style({
-            //     opacity: '0'
-            // })),
-            // state(':enter', style({
-            //     opacity: '1'
-            // })),
-            state('in', style({opacity: 1})),
-            state('out', style({opacity: 0})),
-
-            transition('out => in', animate('1000ms')),
-
-            transition('void => in', [
-                animate('1000ms 1000ms')
+            state('in', style({ opacity: 1 })),
+            transition('void => false', [
+                /*no transition on first load*/
             ]),
             transition('* => void', [
-                animate('1000ms', style({ opacity: 0 }))
+                style({ opacity: '*' }),
+                animate('0.3s ease', style({ opacity: 0 }))
+            ]),
+            transition('void => *', [
+                style({ opacity: 0 }),
+                animate('0.3s ease', style({ opacity: '*' }))
             ])
-
-            // transition(
-            //     ':enter', [
-            //       // style({opacity: 1}),
-            //       animate('1000ms', style({opacity: 1}))
-            //     ]),
-            // transition(
-            //     ':leave', [
-            //       // style({opacity: 0}),
-            //       animate('1000ms', style({opacity: 0}))
-            //     ]),
-            // transition('* <=> show', style({opacity:0, }), animate('600ms ease')),
-            // transition('* => right')
-            // transition('show => hide', animate('300ms ease-in')),
-            // transition('hide => show', animate('300ms ease-out')),
-            // transition('left => show', animate('300ms ease-out')),
-            // transition('show => right', animate('300ms ease-out')),
-            // transition('out => in', animate(''))
         ])
-
-        // trigger('unitOut', [
-        //     state('start')
-        //     ])
     ]
 })
 export class UnitDisplayComponent implements OnInit, AfterViewInit {
     public title: string;
     public campaign: ICampaign;
+
+    deviceInfo = null;
 
     currentCampaign: ICampaign;
     currIdx: number;
@@ -62,25 +38,43 @@ export class UnitDisplayComponent implements OnInit, AfterViewInit {
     diplayHeight: number;
     currentCrvSize: any;
     mapSubMenu: any[];
+    activeCrv: IUnit[] = [];
 
-    mobHeight: any;
-    mobWidth: any;
-
-    FADEOUT = 300;
+    FADEOUT = 400;
     START_DELAY = 1000;
+    CREATIVE_BORDER = 20; // match 2x the css padding
+    CREATIVE_MARGIN = 40;
+
+    combinedSpace = this.CREATIVE_BORDER + this.CREATIVE_MARGIN;
     bodyElem;
+    runningTransition = false;
 
     SWIPE_ACTION = { LEFT: 'swipeleft', RIGHT: 'swiperight' };
+
+    adView;
+
+    activeMobileMsg = false;
+    mobileBestView: string;
+    mobHeight: any;
+    mobWidth: any;
+    adjustForMobileMsg: {};
+    activeIsMobile = true;
+    deviceOrientation;
+    swipeChange: string;
+
+    // recomendRotation
 
 
     constructor(public bsModalRef: BsModalRef, public _uService: UnitDataService, private elRef: ElementRef) { }
 
 
-    // @HostListener('window:resize', ['$event'])
-    // onResize(event) {
-    //     // this.setNewHeight();
-    //     // console.log(event);
-    // }
+    @HostListener('window:resize', ['$event'])
+    onResize(event) {
+        if ( !this._uService.isMobile() ) {
+            console.log('scalling')
+            this.centerCreative();
+        }
+    }
 
 
     ngOnInit() {
@@ -89,6 +83,8 @@ export class UnitDisplayComponent implements OnInit, AfterViewInit {
         this.currentCampaign = this._uService.getActiveCampaign();
         this.mobHeight = (window.innerHeight);
         this.mobWidth = (window.innerWidth);
+
+        console.log(this.mobHeight);
         this.mapSubMenu = [];
         const keys: string[] = [];
         this.currentCampaign.creatives.forEach((elm, i) => {
@@ -103,91 +99,132 @@ export class UnitDisplayComponent implements OnInit, AfterViewInit {
                 this.mapSubMenu[kIdx].items.push({ size: elm.size, index: i });
             }
         });
-
-        // setTimeout(() => {
-           
-
-        // }, this.START_DELAY);
-
-
-
     }
 
     ngAfterViewInit() {
+        this.adView = this.elRef.nativeElement.querySelector('.ad-view');
         setTimeout(() => {
+            this.activeCrv.push(this.currentCampaign.creatives[this.currIdx]);
+            this.centerCreative();
             this.currentCampaign.creatives[this.currIdx].active = true;
             this.currentCampaign.creatives[this.currIdx].state = 'in';
-            this.centerCreative();
-
         }, this.START_DELAY);
+
+        // if (!HammerGesturesDirective.hammerInitialized) {
+        //     co
+        // }
+    }
+
+    /**
+     * TOOLS
+     */
+
+    /**
+    * [return proportion of missing value]
+    * @param {[number]} proS1 [known size of missing side]
+    * @param {[number]} s2    [oposite side of know values]
+    * @param {[number]} s1    [same side know values]
+    */
+    getProportion(proS1, s2, s1) {
+        return (proS1 * s2) / s1;
+    }
+
+    
+    getCreativeSize(crv: IUnit) {
+        const splitSize = crv.size.split('x');
+        const nWidth: number = +splitSize[0];
+        const nHeight: number = +splitSize[1];
+
+        this.mobileBestView = (nWidth > nHeight && crv.size !== '300x250') ? 'horizontally' : 'vertically';
+        this.activeIsMobile = !crv.safe_mobile;
+
+        if (crv.sub_type === 'Social') {
+            // const vertImg = (+splitSize[0] >= +splitSize[1]) ? true : false;
+            // const refElm = this.elRef.nativeElement.querySelector('.ad-view');
+            // const vertSpace = (refElm.offsetWidth >= refElm.offsetHeight) ? true : false;
+
+            // if (refElm.offsetWidth < nWidth && refElm.offsetHeight >= nHeight) {
+            //     console.log('image width larger');
+            //     nHeight = this.getProportion(refElm.offsetWidth - this.combinedSpace, nHeight, nWidth) - this.combinedSpace;
+            //     nWidth = (refElm.offsetWidth - this.combinedSpace);
+            // } else if (refElm.offsetWidth >= nWidth && refElm.offsetHeight < nHeight) {
+            //     console.log('image height larger');
+
+            //     nWidth = this.getProportion(refElm.offsetHeight - this.combinedSpace, nWidth, nHeight) - this.combinedSpace;
+            //     nHeight = (refElm.offsetHeight - this.combinedSpace);
+            //     // console
+            // } else {
+            //     if (vertSpace) {
+            //         nWidth = this.getProportion(refElm.offsetHeight - this.combinedSpace, nWidth, nHeight) - this.combinedSpace;
+            //     } else {
+            //         nHeight = this.getProportion(refElm.offsetWidth - this.combinedSpace, nHeight, nWidth) - this.combinedSpace;
+            //         nWidth = (refElm.offsetWidth - this.combinedSpace);
+            //     }
+
+            // }
+            const setSize = (this.adView.offsetWidth > this.adView.offsetHeight) ? { width: (this.getProportion(this.adView.offsetHeight - this.CREATIVE_BORDER, nWidth, nHeight)) + 'px' } : { width: (this.adView.offsetWidth) + 'px' };
+            return setSize;
+
+        }
+
+        if (this._uService.isMobile() ) {
+
+            if (this.adView.offsetWidth <= nWidth || this.adView.offsetHeight <= nHeight) {
+                this.adjustForMobileMsg = { height: 'calc(100vh - 220px)' };
+                this.activeMobileMsg = true;
+            } else {
+                this.adjustForMobileMsg = {};
+                this.activeMobileMsg = false;
+            }
+        } else {
+            this.adjustForMobileMsg = {};
+            this.activeMobileMsg = false;
+        }
+        // return {};
+        return { width: (nWidth + this.CREATIVE_BORDER) + 'px', height: (nHeight + this.CREATIVE_BORDER) + 'px' };
     }
 
     centerCreative() {
-        setTimeout(() => {
-            this.currentCrvSize = this.getCreativeSize(this.currentCampaign.creatives[this.currIdx]);
-        }, 300);
+        this.currentCrvSize = this.getCreativeSize(this.currentCampaign.creatives[this.currIdx]);
     }
 
+
+    /**
+     * Navigation
+     */
     changeCreative(i: number) {
-        // this.currentCrvSize = null;
-        this.prevIdx = this.currIdx;
-        this.currIdx = i;
-        this.currentCampaign.creatives[this.prevIdx].state = 'out';
-
-        setTimeout(() => {
-            this.currentCampaign.creatives[this.prevIdx].active = false;
-            this.currentCampaign.creatives[this.currIdx].active = true;
-            this.currentCampaign.creatives[this.currIdx].state = 'in';
-            this.centerCreative();
-        }, this.FADEOUT);
-
-    }
-
-
-
-    onNextUnit() {
-        this.prevIdx = this.currIdx;
-        this.currIdx = (this.currIdx++ >= this.currentCampaign.creatives.length - 1) ? 0 : this.currIdx++;
-        this.currentCampaign.creatives[this.prevIdx].state = 'out';
-        
-        setTimeout(() => {
-            this.currentCampaign.creatives[this.prevIdx].active = false;
-            this.currentCampaign.creatives[this.currIdx].active = true;
-            this.currentCampaign.creatives[this.currIdx].state = 'in';
-            this.currentCrvSize = this.getCreativeSize(this.currentCampaign.creatives[this.currIdx]);
-        }, this.FADEOUT);
-
-    }
-
-    onPrevUnit() {
-        this.prevIdx = this.currIdx;
-        this.currIdx = (this.currIdx-- <= 0) ? this.currentCampaign.creatives.length - 1 : this.currIdx--;
-        this.currentCampaign.creatives[this.prevIdx].state = 'out';
-      
-
-        setTimeout(() => {
-              this.currentCampaign.creatives[this.prevIdx].active = false;
-            this.currentCampaign.creatives[this.currIdx].active = true;
-            this.currentCampaign.creatives[this.currIdx].state = 'in';
-            this.currentCrvSize = this.getCreativeSize(this.currentCampaign.creatives[this.currIdx]);
-        }, this.FADEOUT);
-    }
-
-
-    getCreativeSize(crv: IUnit) {
-
-        if (crv.sub_type === 'Social') {
-            const refElm = this.elRef.nativeElement.querySelector('.slide-item');
-            console.log(refElm.offsetWidth);
-            console.log(refElm.offsetHeight);
-            const _w = refElm.offsetWidth;
-            const _h = refElm.offsetHeight;
-
-            return { width: _w + 'px', height: _h + 'px' };
+        if (!this.runningTransition) {
+            this.runningTransition = true;
+            this.currIdx = i;
+            // this.activeCrv.splice(0, 1);
+            this.activeCrv = [];
         }
-        const splitSize = crv.size.split('x');
-        return { width: (+splitSize[0] + 20) + 'px', height: (+splitSize[1] + 20) + 'px' };
     }
+
+    onRightArrow() {
+        const next = (this.currIdx++ >= this.currentCampaign.creatives.length - 1) ? 0 : this.currIdx++;
+        this.changeCreative(next);
+    }
+
+    onLeftArrow() {
+        const next = (this.currIdx-- <= 0) ? this.currentCampaign.creatives.length - 1 : this.currIdx--;
+        this.changeCreative(next);
+    }
+
+    swipe(e) {
+        if (e === 'swiperight') {
+            this.onLeftArrow();
+        } else {
+            this.onRightArrow();
+        }
+
+        this.swipeChange = e;
+    }
+
+
+    /**
+     * SUB-MENU
+     */
 
     activeSubMenu(crv) {
         return (crv.index === this.currIdx) ? ['active'] : [];
@@ -199,51 +236,39 @@ export class UnitDisplayComponent implements OnInit, AfterViewInit {
         if (this.mapSubMenu.length === 1) {
             cls.push('col-sm-12');
         } else if (this.mapSubMenu.length === 2) {
-
-
             cls.push('col-sm-6');
-
         } else if (this.mapSubMenu.length === 3) {
             cls.push('col-sm-4');
         }
 
-
-
-        // if ( this.mobWidth <= 768 ) {
-        //  console.log('small')
-        // } else if (this.mobWidth > 768 && this.mobWidth < 1200) {
-        //     console.log('inside')
-        // } else if ( this.mobWidth >= 1200) {
-        //     console.log('lg')
-        //     if (this.mapSubMenu.length === 1) {
-        //         console.log('only 1 type')
-        //         cls.push('col-lg-offset-3');
-        //     } else {
-        //         console.log('more than 1')
-        //     }
-        // } else {
-        //     console.log('what')
-        // }
-
         return cls;
     }
 
-    swipe(currentIndex: number, action = this.SWIPE_ACTION.RIGHT) {
-        // out of range
-        console.log(currentIndex, action);
-    }
+
+
+    /**
+     * ANIMATION TRANSITIONS
+     */
 
     animationStarted(e) {
-        console.log(e);
+        setTimeout(() => {
+            if (this.prevIdx >= 1) {
+                this.currentCampaign.creatives[this.prevIdx].active = false;
+                this.currentCampaign.creatives[this.prevIdx].state = 'out';
+            }
+
+            this.currentCampaign.creatives[this.currIdx].active = true;
+            this.currentCampaign.creatives[this.currIdx].state = 'in';
+            this.runningTransition = false;
+        }, this.FADEOUT);
     }
 
     animationDone(e) {
-        console.log(e);
-    }
-
-
-    randomeColor() {
-        return {'background-color': "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);})};
+        if (this.activeCrv.length === 0) {
+            this.currentCrvSize = null;
+            this.centerCreative();
+            this.activeCrv.push(this.currentCampaign.creatives[this.currIdx]);
+        }
     }
 
 }

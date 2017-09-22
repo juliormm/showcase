@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 
 @Component({
     selector: 'app-preview-ad',
-    template: `<div id="dynamic-preview" class="center-block tracksize" [ngStyle]="styleSet">
+    template: `<div id="dynamic-preview" class="" [ngStyle]="styleSet">
             <div *ngIf="render" [innerHTML]="html"></div>
         </div>
     `
@@ -17,7 +17,7 @@ import { environment } from '../../environments/environment';
 
 export class PreviewAdComponent implements OnChanges, AfterViewInit {
     @Input() creative: any;
-    @Input() render = true;
+    @Input() render = false;
     size = {
         width: 800,
         height: 500
@@ -80,14 +80,6 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
         // this.detectShowWarning();
     }
 
-    // detectShowWarning() {
-    //     // apply only on images that are not mobile sizes
-    //     if (this.creative.extension !== '.html' && this.creative.sub_type !== 'Mobile') {
-    //         this.expandToParent();
-    //         this.showWarning = (this.creativeWidth > this.size.width) ? true : false;
-    //     }
-    // }
-
     adjustStyles(padding = true) {
         this.styleSet = {
             'width': (this.size.width) + 'px',
@@ -108,18 +100,7 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
         this.html = this.sanitizer.bypassSecurityTrustHtml(this.getBaseHTML(this.creative.url_path, true));
     }
 
-    expandToParent() {
-        // const elm = this.el.nativeElement.querySelector('.dynamic-preview');
-
-        // const parent = elm.parentElement.parentElement;
-        // this.size.width = parent.offsetWidth;
-        // if (this.creativeHeight >= 500) {
-        //     this.size.height = this.creativeHeight + 10;
-        // }
-
-        // this.adjustStyles();
-    }
-
+    
     getBaseHTML(url: string, useSize = true) {
         if (url.indexOf('.htm') >= 0) {
             return `<iframe class="active-frame center-block" src="${this.safeURL}" height="${this.creativeHeight}" width="${this.creativeWidth}" frameBorder="0"></iframe>`;

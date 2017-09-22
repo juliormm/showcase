@@ -92,6 +92,14 @@ $screen-lg-min: 1200px;
     transition: $args;
 }
 
+@mixin transform($args...){
+    -webkit-transform: $args;
+    -moz-transform: $args;
+    -ms-transform: $args;
+    -o-transform: $args;
+    transform: $args;
+}
+
 @mixin opacity($opacity) {
   opacity: $opacity;
   $opacity-ie: $opacity * 100;

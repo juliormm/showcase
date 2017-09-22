@@ -1,17 +1,30 @@
-.navbar-default {
+@import "../_vars";
+
+.wrapper {
     background-color: #000000;
-    border-color: #000000;
-}
-
-.navbar {
-    position: relative;
-    min-height: 191px;
+    // border-color: #000000;
     margin-bottom: 20px;
-    border: none;
-    border-radius: 0;
+    padding: 10px;
+
+    img {
+    	width: 100px;
+    	height: auto;
+    	 // @include transform(scale(.5));
+    }
 }
 
-.navbar-brand {
-    margin-left: -15px;
-    margin-top: 40px;
+
+
+
+
+
+@media (min-width: $screen-sm-min) {
+    
+  .wrapper {
+    img {
+    	width: auto;
+    	height: auto;
+    }
+}
+
 }

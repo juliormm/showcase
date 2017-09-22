@@ -1,32 +1,34 @@
 <div class="modal-header">
   <div class="modal-title pull-left">{{currentCampaign.campaign_name}}</div>
-  <button type="button" class="close pull-right" aria-label="Close" (click)="_uService.closeModal()">
+  <div class="close-modal pull-right" (click)="_uService.closeModal()">
     <span aria-hidden="true"><img src="./assets/images/close_modal.png" alt=""></span>
-  </button>
+  </div>
 </div>
-<div class="modal-body swipe-box" id="modal-body" (swipeleft)="swipe($event.type)" (swiperight)="swipe($event.type)">
-  <div class="ad-view">
-    <div class="vertical-center" [ngStyle]="currentCrvSize">
-      <div *ngFor="let item of currentCampaign.creatives; let idx = index;" [@slideInOut]="item.state" (@slideInOut.start)="animationStarted($event)" (@slideInOut.done)="animationDone($event)">
-        <div class="slide-item" *ngIf="item.active">
-          <app-preview-ad [render]="item.active" [creative]="item"></app-preview-ad>
-        </div>
+<div class="mobile-message" *ngIf="activeMobileMsg">
+  <span *ngIf="activeIsMobile">This creative is not mobile friendly. When viewing slide to pan creative.</span> We recommend you view the creative {{mobileBestView}}
+</div>
+<div class="modal-body swipe-box" id="modal-body" [ngStyle]="adjustForMobileMsg">
+  <div class="ad-view active-arrows" >
+    <div *ngFor="let item of activeCrv; let idx = index;" [@slideInOut]="item.state" (@slideInOut.start)="animationStarted($event)" (@slideInOut.done)="animationDone($event)" [ngStyle]="currentCrvSize" class="slide-item-border"> 
+      <div>
+        <app-preview-ad [render]="item.active" [creative]="item"></app-preview-ad>
       </div>
     </div>
   </div>
-  <div class="arrow-nav">
-     <div class="btn left-arrow" (click)="onPrevUnit()"> <span class="arrow glyphicon glyphicon-menu-left"></span></div>
-    <div class="btn right-arrow" (click)="onNextUnit()"> <span class="arrow glyphicon glyphicon-menu-right"></span></div>
+  <div class="arrow-nav" (swipeleft)="swipe($event.type)" (swiperight)="swipe($event.type)">
+    <div class="text-center" *ngIf="_uService.isMobile()"> <span class="glyphicon glyphicon-transfer"></span> SWIPE HERE</div>
+    
+    <div class="arr left-arrow" (click)="onLeftArrow()" *ngIf="!_uService.isMobile()"> <span class="arrow glyphicon glyphicon-menu-left"></span></div>
+    <div class="arr right-arrow" (click)="onRightArrow()" *ngIf="!_uService.isMobile()"> <span class="arrow glyphicon glyphicon-menu-right"></span></div>
   </div>
- 
 </div>
-<div class="modal-footer">
+<div class="creative-menu">
   <div class="row">
-    <div class="" [ngClass]="subDynamicClass()" *ngFor="let t of mapSubMenu;">
-      <div class="text-center">
+    <div class="text-center" [ngClass]="subDynamicClass()" *ngFor="let t of mapSubMenu;">
+      <!-- <div class=""> -->
         <span class="submenu-title"> {{ t.type }}: </span>
-        <span class="submenu-size" (click)="changeCreative(crv.index)" [ngClass]="activeSubMenu(crv)" *ngFor="let crv of t.items">{{crv.size}}</span>
-      </div>
+        <span class="submenu-size" (click)="changeCreative(crv.index)" [ngClass]="activeSubMenu(crv)" *ngFor="let crv of t.items">{{crv.size}} </span>
+      <!-- </div> -->
     </div>
   </div>
 </div>

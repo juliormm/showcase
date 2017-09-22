@@ -1,96 +1,108 @@
 @import "../_vars";
 
-.slide-item {
+.slide-item-border {
   background-color: #FFFFFF;
   padding: 10px;
+  text-align: center;
+  display: inline-block; // left: 50%;
+  // top: 50%;
+  // @include transform(translateX(-50%));
 }
 
 .ng-trigger-slideInOut {
   // opacity: 1;
 }
 
-
-
-
-.submenu-title {
-  text-transform: uppercase;
-  font-weight: 600;
-}
-
-.submenu-size {
-  margin: 0 5px;
+.close-modal {
   cursor: pointer;
-
-  &.active {
-    border-bottom: 1px;
-    border-bottom: 2px dotted;
-    border-bottom: medium solid #07a1bf;
+  opacity: .5;
+  &:hover {
+    opacity: 1;
   }
 }
 
 
-
-.vertical-center {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-  position: absolute;
+.mobile-message {
+  height: 50px;
+  // color: $white;
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.2;
 }
+
 
 .arrow-nav {
-
+  height: 50px;
   .arrow {
     vertical-align: middle;
-    line-height:.9;
-    font-size:40px;
+    line-height: .9;
+    font-size: 40px;
   }
 
-  .btn {
+
+  .arr {
+    display: inline-block; //   -ms-touch-action: manipulation;
+    //   touch-action: manipulation;
+    cursor: pointer; //   -webkit-user-select: none;
+    //   -moz-user-select: none;
+    //   -ms-user-select: none;
+    //   user-select: none;
+    background-image: none;
     min-width: 40px;
     min-height: 40px;
-    padding:0;
+    padding: 0;
+    color: #FFFFFF;
+    opacity: .5;
+    position: absolute;
+
+    &:hover {
+      opacity: 1;
+    }
 
     &.left-arrow {
-      position: absolute;
-      left: 10px;
-      top: calc(50%);
+
+      left: 50px;
     }
 
     &.right-arrow {
-      position: absolute;
-      right: 10px;
-      top: calc(50%);
+      //     position: absolute;
+      right: 50px;
     }
   }
 }
 
 
-
+// :host ::ng-deep child.class1 {
+//        color:yellow;
+//      }
 // MODAL
 .modal-title {
   font-family: "bebas-neue", sans-serif;
-  font-size: 20px;
+  font-size: 32px;
+  line-height: 1;
+  width: calc(100% - 50px);
 }
 
 
 .modal-header {
+  padding: 10px;
   color: #FFFFFF;
   text-transform: uppercase;
   border-bottom: none;
-  height: calc(10vh);
+  height: 50px;
 }
 
 .modal-body {
-  padding: 0 80px;
-  height: calc(80vh);
+  padding: 0;
   width: 100%;
+  height: calc(100vh - 170px);
 }
 
 
 .modal-footer {
-  text-align: left;
+  padding: 0;
+  text-align: center;
   color: $white;
   font-family: "proxima-nova", sans-serif;
   font-style: normal;
@@ -104,48 +116,86 @@
   height: 100%;
   width: 100%;
   position: relative;
+  text-align: center;
+
+  &.active-arrows {
+      height: calc(100% - 40px);
+    }
+
+}
+
+
+.creative-menu {
+  padding: 5px 5px 0 5px;
+  text-align: center;
+  color: #FFFFFF;
+  font-family: "proxima-nova", sans-serif;
+  font-style: normal;
+  font-weight: 100;
+  height: 70px; // position:absolute;
+  // right:0;
+  // top:10vh;
+  // width:75vw;
+  // height:100%;
+  // background-color: #CCCCCC;
+  .submenu-title {
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .submenu-size {
+    margin: 0 5px;
+    cursor: pointer;
+
+    &.active {
+      border-bottom: 1px;
+      border-bottom: 2px dotted;
+      border-bottom: medium solid #07a1bf;
+    }
+  }
+}
+
+
+@media (min-width: $screen-sm-min) {
+    
+  .modal-header {
+     height: 100px;
+  }
+     
+
+
 }
 
 
 
+@media (min-width: $screen-md-min) {
+  .modal-body {
+    padding: 0 80px; // height: calc(80vh);
+  }
 
-// @media (min-width: 768px){
-// 	// .modal-header{
-// 	// 	height: calc(10vh);
-// 	// }
-// 	.modal-body{
-// 		padding: 10px 50px;
-// 	    height: calc(80vh);
-// 	    width: 100%;
-// 	}
-// 	.left-arrow{
-// 		left: 20px;
-// 		top: calc(40vh);
-// 		bottom: auto;
-// 		font-size: 56px;
-//     color: #FFFFFF;
-// 	}
-// 	.right-arrow{
-// 		right: 20px;
-// 		top: calc(40vh);
-// 		bottom: auto;
-// 		font-size: 56px;
-//     color: #FFFFFF;
-// 	}
-// }
-// 
-.color-0 {
-	background-color: red;
-}
+  
 
-.color-1 {
-	background-color: blue;
-}
+  .slide-item-border {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: block;
+    @include transform(translateX(-50%) translateY(-50%));
+  }
 
-.color-2 {
-	background-color: yellow;
-}
+  .arrow-nav {
+    .arr {
+      position: absolute;
 
-.color-4 {
-	background-color: green;
+      &.left-arrow {
+        left: 10px;
+        top: calc(50%);
+      }
+
+      &.right-arrow {
+        right: 10px;
+        top: calc(50%);
+      }
+    }
+  }
 }

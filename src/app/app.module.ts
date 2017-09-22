@@ -6,6 +6,7 @@ import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ModalModule } from 'ngx-bootstrap';
+// import { Ng2DeviceDetectorModule } from 'ng2-device-detector';
 
 import { AppRoutingModule } from './app-routing';
 import { ApiService } from './api.service';
@@ -37,6 +38,7 @@ import { CreativesByTypePipe } from './creatives-by-type.pipe';
     BrowserModule,
     AppRoutingModule,
     ModalModule.forRoot()
+    // Ng2DeviceDetectorModule.forRoot()
   ],
   entryComponents: [UnitDisplayComponent],
   providers: [ApiService, LoadingService, UnitDataService],
