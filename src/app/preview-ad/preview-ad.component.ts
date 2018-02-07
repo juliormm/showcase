@@ -27,7 +27,7 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
     creativeHeight: number;
     showWarning = false;
     styleSet: any = {};
-    baseURL = environment.PREVIEWS_URL;
+    baseURL:string;
     safeURL: string;
     html: any;
     constructor(private sanitizer: DomSanitizer, private el: ElementRef) { }
@@ -38,7 +38,9 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
     // }
 
     ngOnChanges(changes: SimpleChanges) {
+
         if (changes['creative']) {
+            // console.log(this.creative)
             let useSize = true;
             if (this.creative.type === 'Email' && this.creative.extension === '.html') {
                 // email creatives
@@ -53,14 +55,14 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
                 this.size.height = 600;
                 useSize = false;
             } else if (this.creative.type === 'Static' && this.creative.sub_type === 'Social') {
-                console.log('social');
+                // console.log('social');
                 useSize = false;
                 const splitSize = this.creative.size.split('x');
                 this.creativeWidth = +splitSize[0];
                 this.creativeHeight = +splitSize[1];
                 // this.detectShowWarning();
             } else {
-                console.log('no social here');
+                // console.log('no social here');
                 const splitSize = this.creative.size.split('x');
                 this.creativeWidth = +splitSize[0];
                 this.creativeHeight = +splitSize[1];
@@ -70,6 +72,9 @@ export class PreviewAdComponent implements OnChanges, AfterViewInit {
                 this.adjustStyles(false);
 
             }
+
+            this.baseURL = (this.creative.server === 'QT') ? environment.ASSETS_QT_URL : environment.ASSETS_PREVIEW_URL;
+
 
             this.safeURL = (this.creative.url_params) ? this.baseURL + this.creative.url_path + '?' + this.creative.url_params : this.baseURL + this.creative.url_path;
             this.html = this.sanitizer.bypassSecurityTrustHtml(this.getBaseHTML(this.creative.url_path, useSize));

@@ -7,5 +7,8 @@ export const environment = {
   production: false,
   API_URL: 'http://localhost:8888/db/public/',
   PREVIEWS_URL: ' http://quicktransmit.com/api/campaigns/_previews/',
-  SHOWCASE_IMAGES: 'http://localhost:8888/db/public/images/showcase/'
+  SHOWCASE_IMAGES: 'http://localhost:8888/db/public/images/showcase/',
+  
+  ASSETS_QT_URL: 'http://quicktransmit.com/api/campaigns/_previews/',
+  ASSETS_PREVIEW_URL: 'http://previews.quicktransmit.com/_revs/'
 };

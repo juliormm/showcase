@@ -67,7 +67,7 @@ export class ApiService {
             return (body.data) ? body.data : body;
         } else {
 
-            return { failed: true };
+            return [];
         }
     }
 
